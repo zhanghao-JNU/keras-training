@@ -5,6 +5,7 @@ import os
 import numpy as np
 import cv2.cv as cv
 from keras.models import Sequential
+from keras.layers.advanced_activations import LeakyReLU
 from keras.layers.core import Dense,Dropout,Activation,Flatten
 from keras.layers.convolutional import Convolution2D,MaxPooling2D
 from keras.optimizers import Adam
@@ -42,23 +43,23 @@ def cnn_model(train_data,train_label,test_data,test_label):
     model = Sequential()
 #卷积层 12 × 120 × 120 大小
     model.add(Convolution2D(
-        nb_filter = 20,
-        nb_row = 7,
-        nb_col = 7,
+        nb_filter = 12,
+        nb_row = 3,
+        nb_col = 3,
         border_mode = 'valid',
         dim_ordering = 'th',
         input_shape = (1,128,192)))
     model.add(Activation('relu'))#激活函数使用修正线性单元
 #池化层12 × 60 × 60
     model.add(MaxPooling2D(
-        pool_size = (4,4),
-        strides = (4,4),
+        pool_size = (2,2),
+        strides = (2,2),
         border_mode = 'valid'))
 #卷积层 24 * 58 * 58
     model.add(Convolution2D(
-        12,
-        5,
-        5,
+        24,
+        3,
+        3,
         border_mode = 'valid',
         dim_ordering = 'th'))
     model.add(Activation('relu'))
@@ -67,12 +68,24 @@ def cnn_model(train_data,train_label,test_data,test_label):
         pool_size = (2,2),
         strides = (2,2),
         border_mode = 'valid'))
+    model.add(Convolution2D(
+        48,
+        3,
+        3,
+        border_mode = 'valid',
+        dim_ordering = 'th'))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(
+        pool_size = (2,2),
+        strides =(2,2),
+        border_mode = 'valid'))
     model.add(Flatten())
     model.add(Dense(20))
-    model.add(Activation('relu'))
+    model.add(Activation(LeakyReLU(0.3)))
     model.add(Dropout(0.5))
     model.add(Dense(20))
-    model.add(Activation('relu'))
+    model.add(Activation(LeakyReLU(0.3)))
+    model.add(Dropout(0.4))
     model.add(Dense(5,init = 'normal'))
     model.add(Activation('softmax'))
     adam = Adam(lr = 0.001)
@@ -80,7 +93,7 @@ def cnn_model(train_data,train_label,test_data,test_label):
             loss =  'categorical_crossentropy',
             metrics = ['accuracy'])
     print '----------------training-----------------------'
-    model.fit(train_data,train_label,batch_size = 20,nb_epoch = 100,shuffle = True,show_accuracy = True,validation_split = 0.1)
+    model.fit(train_data,train_label,batch_size = 20,nb_epoch = 50,shuffle = True,show_accuracy = True,validation_split = 0.1)
     print '----------------testing------------------------'
     loss,accuracy = model.evaluate(test_data,test_label)
     print '\n test loss:',loss
