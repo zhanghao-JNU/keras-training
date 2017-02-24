@@ -65,5 +65,13 @@ print('Test score:', score[0])
 print('Test accuracy:', score[1])
 
 model.save('mnist.h5')
+# save and load weights
+#model.save_weights('my_model_weights.h5')
+#model.load_weights('my_model_weights.h5')
+# save and load fresh network without trained weights
+#from keras.models import model_from_json
+#json_string = model.to_json()
+#model = model_from_json(json_string)
+
 
 
