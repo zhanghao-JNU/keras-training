@@ -38,9 +38,9 @@ model = load_model('mnist.h5')
 model.summary()
 
 
-model.compile(loss='categorical_crossentropy',
-              optimizer=RMSprop(),
-              metrics=['accuracy'])
+#model.compile(loss='categorical_crossentropy',
+#              optimizer=RMSprop(),
+#              metrics=['accuracy'])
 
 
 score = model.evaluate(X_test, Y_test, verbose=0)
